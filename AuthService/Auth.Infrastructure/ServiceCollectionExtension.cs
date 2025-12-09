@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Auth.Infrastructure
 {
-    public static class DependencyInjection
+    public static class ServiceCollectionExtension
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
@@ -18,6 +18,7 @@ namespace Auth.Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            services.AddSingleton<ITokenService, TokenService>();
 
             return services;
         }

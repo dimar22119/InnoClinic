@@ -5,18 +5,11 @@ using MediatR;
 
 namespace Auth.Application.Users.Handlers
 {
-    public class GetUserByEmailHandler : IRequestHandler<GetUserByEmailQuery, UserDto?>
+    public class GetUserByEmailHandler(IUserRepository userRepository) : IRequestHandler<GetUserByEmailQuery, UserDto?>
     {
-        private readonly IUserRepository _userRepository;
-
-        public GetUserByEmailHandler(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
-
         public async Task<UserDto?> Handle(GetUserByEmailQuery request, CancellationToken cancellation)
         {
-            var user = await _userRepository.GetByEmailAsync(request.Email);
+            var user = await userRepository.GetByEmailAsync(request.Email);
             if(user is null) return null;
 
             return new UserDto(user.Id, user.Email.Value, user.CreatedAt, user.Role.ToString());

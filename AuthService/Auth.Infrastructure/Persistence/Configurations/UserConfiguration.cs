@@ -25,6 +25,8 @@ namespace Auth.Infrastructure.Persistance.Configurations
                     .HasColumnName("Email")
                     .IsRequired()
                     .HasMaxLength(256);
+                email.HasIndex(e => e.Value)
+                    .IsUnique();
             });
 
             builder.OwnsOne(x => x.PasswordHash, ph =>

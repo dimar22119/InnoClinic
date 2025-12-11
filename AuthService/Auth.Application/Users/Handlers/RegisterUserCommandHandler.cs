@@ -7,34 +7,26 @@ using MediatR;
 
 namespace Auth.Application.Users.Handlers
 {
-    public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Guid>
+    public class RegisterUserCommandHandler(IUserRepository userRepository, IPasswordHasher passwordHasher) : IRequestHandler<RegisterUserCommand, Guid>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IPasswordHasher _passwordHasher;
-
-        public RegisterUserCommandHandler(IUserRepository userRepository, IPasswordHasher passwordHasher)
-        {
-            _userRepository = userRepository;
-            _passwordHasher = passwordHasher;
-        }
         public async Task<Guid> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            var existingUser = await _userRepository.GetByEmailAsync(request.Email);
+            var existingUser = await userRepository.GetByEmailAsync(request.Email);
             if (existingUser is not null)
             {
                 throw new InvalidOperationException("A user with that email already exists.");
             }
 
-            var hashedPassword = _passwordHasher.Hash(request.Password);
+            var hashedPassword = passwordHasher.Hash(request.Password);
 
             var emailVo = Email.From(request.Email);
             var passwordHashVo = new PasswordHash(hashedPassword);
 
-            var role = Enum.TryParse<Role>(request.Role, true, out var parsedRole) ? parsedRole : Role.User;
+            var role = Enum.TryParse<Role>(request.Role, true, out var parsedRole) ? parsedRole : Role.Patient;
 
             var user = new User(emailVo, passwordHashVo, role);
 
-            await _userRepository.AddAsync(user);
+            await userRepository.AddAsync(user);
 
             return user.Id;
         }

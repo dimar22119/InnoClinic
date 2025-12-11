@@ -12,17 +12,12 @@ namespace Auth.Domain.Entities
 
         private User() { }
 
-        public User(Email email, PasswordHash passwordHash, Role role = Role.User)
+        public User(Email email, PasswordHash passwordHash, Role role = Role.Patient)
         {
             Id = Guid.NewGuid();
             Email = email;
             PasswordHash = passwordHash;
             CreatedAt = DateTime.UtcNow;
-            Role = role;
-        }
-
-        public void AssignRole(Role role)
-        {
             Role = role;
         }
     }

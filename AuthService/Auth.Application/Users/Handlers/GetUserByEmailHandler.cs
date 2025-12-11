@@ -1,10 +1,11 @@
 ﻿using Auth.Application.Users.Dto;
 using Auth.Application.Users.Queries;
 using Auth.Domain.Repositories;
+using MediatR;
 
 namespace Auth.Application.Users.Handlers
 {
-    public class GetUserByEmailHandler
+    public class GetUserByEmailHandler : IRequestHandler<GetUserByEmailQuery, UserDto?>
     {
         private readonly IUserRepository _userRepository;
 
@@ -18,7 +19,7 @@ namespace Auth.Application.Users.Handlers
             var user = await _userRepository.GetByEmailAsync(request.Email);
             if(user is null) return null;
 
-            return new UserDto(user.Id, user.Email.Value, user.CreatedAt);
+            return new UserDto(user.Id, user.Email.Value, user.CreatedAt, user.Role.ToString());
         }
     }
 }

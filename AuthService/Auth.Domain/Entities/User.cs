@@ -8,15 +8,22 @@ namespace Auth.Domain.Entities
         public Email Email { get; private set; }
         public PasswordHash PasswordHash { get; private set; }
         public DateTime CreatedAt { get; set; }
+        public Role Role { get; private set; }
 
         private User() { }
 
-        public User(Email email, PasswordHash passwordHash)
+        public User(Email email, PasswordHash passwordHash, Role role = Role.User)
         {
             Id = Guid.NewGuid();
             Email = email;
             PasswordHash = passwordHash;
             CreatedAt = DateTime.UtcNow;
+            Role = role;
+        }
+
+        public void AssignRole(Role role)
+        {
+            Role = role;
         }
     }
 }

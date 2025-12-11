@@ -3,7 +3,6 @@ using Auth.Application.Users.Commands;
 using Auth.Application.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading;
 
 namespace Auth.Api.Controllers
 {
@@ -18,6 +17,7 @@ namespace Auth.Api.Controllers
             _mediator = mediator;
         }
 
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
@@ -25,10 +25,23 @@ namespace Auth.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var command = new RegisterUserCommand(request.Email, request.Password);
+            var command = new RegisterUserCommand(request.Email, request.Password, request.Role);
             var userId = await _mediator.Send(command, cancellationToken);
+            
 
             return CreatedAtAction(nameof(GetById), new { id = userId }, new { id = userId });
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginUserRequest request, CancellationToken cancellationToken)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var command = new LoginUserCommand(request.Email, request.Password);
+            var result = await _mediator.Send(command, cancellationToken);
+            return Ok(result);
         }
 
         [HttpGet("{id:guid}")]

@@ -1,13 +1,14 @@
 ﻿using Auth.Application.Users.Dto;
 using Auth.Application.Users.Queries;
 using Auth.Domain.Repositories;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Auth.Application.Users.Handlers
 {
-    public class GetUserByIdQueryHandler
+    public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto?>
     {
         private readonly IUserRepository _userRepository;
 
@@ -21,7 +22,7 @@ namespace Auth.Application.Users.Handlers
             var user = await _userRepository.GetByIdAsync(request.Id);
             if (user is null) return null;
 
-            return new UserDto(user.Id, user.Email.Value, user.CreatedAt);
+            return new UserDto(user.Id, user.Email.Value, user.CreatedAt, user.Role.ToString());
         }
     }
 }

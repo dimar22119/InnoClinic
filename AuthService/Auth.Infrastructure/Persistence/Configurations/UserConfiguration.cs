@@ -1,4 +1,5 @@
 ﻿using Auth.Domain.Entities;
+using Auth.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -33,7 +34,14 @@ namespace Auth.Infrastructure.Persistance.Configurations
                     .IsRequired();
             });
 
-            builder.HasIndex("Email").IsUnique();
+            builder.Property(u => u.Role)
+                .HasConversion(
+                    r => r.ToString(),
+                    r => (Role)Enum.Parse(typeof(Role), r))
+                .HasColumnName("Role")
+                .IsRequired()
+                .HasMaxLength(50);
+
         }
     }
 }

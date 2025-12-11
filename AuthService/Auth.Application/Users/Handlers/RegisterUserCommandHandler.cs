@@ -30,7 +30,9 @@ namespace Auth.Application.Users.Handlers
             var emailVo = Email.From(request.Email);
             var passwordHashVo = new PasswordHash(hashedPassword);
 
-            var user = new User(emailVo, passwordHashVo);
+            var role = Enum.TryParse<Role>(request.Role, true, out var parsedRole) ? parsedRole : Role.User;
+
+            var user = new User(emailVo, passwordHashVo, role);
 
             await _userRepository.AddAsync(user);
 

@@ -4,5 +4,5 @@ using System.Text;
 
 namespace Auth.Application.Users.Dto
 {
-    public sealed record UserDto(Guid Id, string Email, DateTime CreatedAt);
+    public sealed record UserDto(Guid Id, string Email, DateTime CreatedAt, string Role);
 }

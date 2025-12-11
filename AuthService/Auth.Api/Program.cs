@@ -1,7 +1,15 @@
+using Auth.Api.Behaviors;
+using Auth.Api.Middleware;
 using Auth.Application.Users.Commands;
 using Auth.Application.Users.Validators;
 using Auth.Infrastructure;
 using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 

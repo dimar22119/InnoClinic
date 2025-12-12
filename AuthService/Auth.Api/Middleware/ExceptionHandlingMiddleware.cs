@@ -2,20 +2,13 @@
 
 namespace Auth.Api.Middleware
 {
-    public class ExceptionHandlingMiddleware
+    public class ExceptionHandlingMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-
-        public ExceptionHandlingMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
-
         public async Task Invoke(HttpContext context)
         {
             try
             {
-                await _next(context);
+                await next(context);
             }
             catch (ValidationException ex)
             {

@@ -2,6 +2,7 @@
 using Auth.Domain.Repositories;
 using Auth.Infrastructure.Persistance;
 using Auth.Infrastructure.Repositories;
+using Auth.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

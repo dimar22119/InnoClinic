@@ -1,7 +1,14 @@
+using Auth.Api.Behaviors;
+using Auth.Api.Middleware;
 using Auth.Application.Users.Commands;
 using Auth.Application.Users.Validators;
 using Auth.Infrastructure;
+using Auth.Infrastructure.Authentication;
 using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,12 +18,10 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(RegisterUserCommand).Assembly));
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+builder.Services.Configure<JwtOptions>(
+    builder.Configuration.GetSection("Jwt"));
 
 builder.Services.AddValidatorsFromAssembly(typeof(RegisterUserCommandValidator).Assembly);
-
-var secret = builder.Configuration["Jwt:Secret"];
-var issuer = builder.Configuration["Jwt:Issuer"];
-var audience = builder.Configuration["Jwt:Audience"];
 
 builder.Services.AddAuthentication(options =>
 {
@@ -25,16 +30,18 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
+
     options.RequireHttpsMetadata = true;
     options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidIssuer = issuer,
+        ValidIssuer = jwtOptions.Issuer,
         ValidateAudience = true,
-        ValidAudience = audience,
+        ValidAudience = jwtOptions.Audience,
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
         ValidateLifetime = true
     };
 });

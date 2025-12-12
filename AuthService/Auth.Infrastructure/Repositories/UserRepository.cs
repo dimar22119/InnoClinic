@@ -5,30 +5,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Auth.Infrastructure.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(AuthDbContext dbContext) : IUserRepository
     {
-        private readonly AuthDbContext _dbContext;
-
-        public UserRepository(AuthDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
         public async Task AddAsync(User user)
         {
-            _dbContext.Users.Add(user);
-            await _dbContext.SaveChangesAsync();
+            dbContext.Users.Add(user);
+            await dbContext.SaveChangesAsync();
         }
 
         public async Task<User?> GetByEmailAsync(string email)
         {
-            return await _dbContext.Users
+            return await dbContext.Users
                 .FirstOrDefaultAsync(u => u.Email.Value == email);
         }
 
         public async Task<User?> GetByIdAsync(Guid id)
         {
-            return await _dbContext.Users
+            return await dbContext.Users
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
     }

@@ -6,14 +6,9 @@ using System.Text;
 
 namespace Auth.Infrastructure.Persistance
 {
-    public class AuthDbContext : DbContext
+    public class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
     {
         public DbSet<User> Users => Set<User>();
-
-        public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
-        {
-            
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -8,15 +8,8 @@ namespace Auth.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    public class UsersController(IMediator mediator) : ControllerBase
     {
-        private readonly IMediator _mediator;
-
-        public UsersController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserRequest request, CancellationToken cancellationToken)
         {
@@ -26,7 +19,7 @@ namespace Auth.Api.Controllers
             }
 
             var command = new RegisterUserCommand(request.Email, request.Password, request.Role);
-            var userId = await _mediator.Send(command, cancellationToken);
+            var userId = await mediator.Send(command, cancellationToken);
             
 
             return CreatedAtAction(nameof(GetById), new { id = userId }, new { id = userId });
@@ -40,7 +33,7 @@ namespace Auth.Api.Controllers
                 return BadRequest(ModelState);
             }
             var command = new LoginUserCommand(request.Email, request.Password);
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
             return Ok(result);
         }
 
@@ -48,7 +41,7 @@ namespace Auth.Api.Controllers
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
             var query = new GetUserByIdQuery(id);
-            var user = await _mediator.Send(query, cancellationToken);
+            var user = await mediator.Send(query, cancellationToken);
 
             if (user is null) return NotFound();
 
@@ -62,7 +55,7 @@ namespace Auth.Api.Controllers
                 return BadRequest("Email is required");
 
             var query = new GetUserByEmailQuery(email);
-            var user = await _mediator.Send(query, cancellationToken);
+            var user = await mediator.Send(query, cancellationToken);
 
             if (user is null) return NotFound();
 

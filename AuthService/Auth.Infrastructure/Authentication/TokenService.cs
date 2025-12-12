@@ -11,11 +11,11 @@ namespace Auth.Infrastructure.Services
 {
     public sealed class TokenService : ITokenService
     {
-        private readonly JwtOptions _options;
+        private readonly JwtOptions options;
 
-        public TokenService(IOptions<JwtOptions> options)
+        public TokenService(IOptions<JwtOptions> optionsP)
         {
-            _options = options.Value ?? throw new ArgumentNullException(nameof(options));
+            options = optionsP.Value ?? throw new ArgumentNullException(nameof(optionsP));
         }
 
         public string GenerateToken(Guid userId, string email, string role)
@@ -29,15 +29,15 @@ namespace Auth.Infrastructure.Services
                 new Claim(ClaimTypes.Role, role)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Secret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: _options.Issuer,
-                audience: _options.Audience,
+                issuer: options.Issuer,
+                audience: options.Audience,
                 claims: claims,
                 notBefore: now,
-                expires: now.AddMinutes(_options.ExpiresMinutes),
+                expires: now.AddMinutes(options.ExpiresMinutes),
                 signingCredentials: creds
                 );
 

@@ -9,5 +9,6 @@ namespace ProfilesService.Application.Interfaces.Repositories
         Task AddAsync(Receptionist receptionist);
         Task UpdateAsync(Receptionist receptionist);
         Task DeleteAsync(Guid id);
+        Task<IEnumerable<Receptionist>> GetByNameAsync(string firstName, string lastName);
     }
 }

@@ -1,4 +1,5 @@
-﻿using ProfilesService.Application.Common;
+﻿using Mapster;
+using ProfilesService.Application.Common;
 using ProfilesService.Application.Dtos.Doctors;
 using ProfilesService.Application.Interfaces.Repositories;
 using ProfilesService.Application.Interfaces.Services;
@@ -13,13 +14,13 @@ namespace ProfilesService.Application.Services
             var doctor = await doctorRepository.GetByIdAsync(id);
             return doctor is null
                 ? Result<DoctorResponse>.Failure(new Error(ErrorCode.NotFound, "Doctor not found"))
-                : Result<DoctorResponse>.Success(MapToResponse(doctor));
+                : Result<DoctorResponse>.Success(doctor.Adapt<DoctorResponse>());
         }
 
         public async Task<Result<IEnumerable<DoctorResponse>>> GetAllAsync()
         {
             var doctors = await doctorRepository.GetAllAsync();
-            return Result<IEnumerable<DoctorResponse>>.Success(doctors.Select(MapToResponse));
+            return Result<IEnumerable<DoctorResponse>>.Success(doctors.Adapt<IEnumerable<DoctorResponse>>());
         }
 
         public async Task<Result<DoctorResponse>> CreateAsync(CreateDoctorRequest request)
@@ -33,8 +34,15 @@ namespace ProfilesService.Application.Services
                 request.Status
             );
 
+            var existingDoctor = await doctorRepository.GetByNameAsync(request.FirstName, request.LastName);
+
+            if (existingDoctor != null)
+            {
+                return Result<DoctorResponse>.Failure(new Error(ErrorCode.Conflict, "Doctor with the same name already exists"));
+            }
+
             await doctorRepository.AddAsync(doctor);
-            return Result<DoctorResponse>.Success(MapToResponse(doctor));
+            return Result<DoctorResponse>.Success(doctor.Adapt<DoctorResponse>());
         }
 
         public async Task<Result<DoctorResponse>> UpdateAsync(UpdateDoctorRequest request)
@@ -51,7 +59,7 @@ namespace ProfilesService.Application.Services
             );
 
             await doctorRepository.UpdateAsync(doctor);
-            return Result<DoctorResponse>.Success(MapToResponse(doctor));
+            return Result<DoctorResponse>.Success(doctor.Adapt<DoctorResponse>());
         }
 
         public async Task<Result> DeleteAsync(Guid id)
@@ -67,18 +75,7 @@ namespace ProfilesService.Application.Services
         public async Task<Result<IEnumerable<DoctorResponse>>> GetByNameAsync(string firstName, string lastName)
         {
             var doctors = await doctorRepository.GetByNameAsync(firstName, lastName);
-            return Result<IEnumerable<DoctorResponse>>.Success(doctors.Select(MapToResponse));
+            return Result<IEnumerable<DoctorResponse>>.Success(doctors.Adapt<IEnumerable<DoctorResponse>>());
         }
-
-        private static DoctorResponse MapToResponse(Doctor doctor) =>
-            new DoctorResponse(
-                doctor.Id,
-                doctor.AccountId,
-                doctor.SpecializationId,
-                doctor.FirstName,
-                doctor.LastName,
-                doctor.CareerYearStart,
-                doctor.Status
-            );
     }
 }

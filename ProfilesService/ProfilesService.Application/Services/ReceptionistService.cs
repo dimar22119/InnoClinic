@@ -1,4 +1,5 @@
-﻿using ProfilesService.Application.Common;
+﻿using Mapster;
+using ProfilesService.Application.Common;
 using ProfilesService.Application.Dtos.Receptionist;
 using ProfilesService.Application.Interfaces.Repositories;
 using ProfilesService.Application.Interfaces.Services;
@@ -13,28 +14,32 @@ namespace ProfilesService.Application.Services
             var receptionist = await receptionistRepository.GetByIdAsync(id);
             return receptionist is null
                 ? Result<ReceptionistResponse>.Failure(new Error(ErrorCode.NotFound, "Receptionist not found"))
-                : Result<ReceptionistResponse>.Success(MapToResponse(receptionist));
+                : Result<ReceptionistResponse>.Success(receptionist.Adapt<ReceptionistResponse>());
         }
 
         public async Task<Result<IEnumerable<ReceptionistResponse>>> GetAllAsync()
         {
             var receptionists = await receptionistRepository.GetAllAsync();
-            return Result<IEnumerable<ReceptionistResponse>>.Success(receptionists.Select(MapToResponse));
+            return Result<IEnumerable<ReceptionistResponse>>.Success(receptionists.Adapt<IEnumerable<ReceptionistResponse>>());
         }
 
         public async Task<Result<ReceptionistResponse>> CreateAsync(CreateReceptionistRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.FirstName))
-                return Result<ReceptionistResponse>.Failure(new Error(ErrorCode.ValidationFailed, "First name is required"));
-
             var receptionist = new Receptionist(
                 request.AccountId,
                 request.FirstName,
                 request.LastName
             );
 
+            var existingReceptionist = await receptionistRepository.GetByNameAsync(request.FirstName, request.LastName);
+
+            if(existingReceptionist != null)
+            {
+                return Result<ReceptionistResponse>.Failure(new Error(ErrorCode.Conflict, "Receptionist with the same name already exists"));
+            }
+
             await receptionistRepository.AddAsync(receptionist);
-            return Result<ReceptionistResponse>.Success(MapToResponse(receptionist));
+            return Result<ReceptionistResponse>.Success(receptionist.Adapt<ReceptionistResponse>());
         }
 
         public async Task<Result<ReceptionistResponse>> UpdateAsync(UpdateReceptionistRequest request)
@@ -49,7 +54,7 @@ namespace ProfilesService.Application.Services
             );
 
             await receptionistRepository.UpdateAsync(receptionist);
-            return Result<ReceptionistResponse>.Success(MapToResponse(receptionist));
+            return Result<ReceptionistResponse>.Success(receptionist.Adapt<ReceptionistResponse>());
         }
 
         public async Task<Result> DeleteAsync(Guid id)
@@ -61,13 +66,5 @@ namespace ProfilesService.Application.Services
             await receptionistRepository.DeleteAsync(id);
             return Result.Success();
         }
-
-        private static ReceptionistResponse MapToResponse(Receptionist receptionist) =>
-            new ReceptionistResponse(
-                receptionist.Id,
-                receptionist.AccountId,
-                receptionist.FirstName,
-                receptionist.LastName
-            );
     }
 }

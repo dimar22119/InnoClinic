@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using ProfilesService.Domain.Common;
 using ProfilesService.Domain.Entities;
 
 namespace ProfilesService.Infrastructure.Persistance.Configurations
@@ -20,11 +21,11 @@ namespace ProfilesService.Infrastructure.Persistance.Configurations
 
             builder.Property(d => d.FirstName)
                    .IsRequired()
-                   .HasMaxLength(100);
+                   .HasMaxLength(FieldConstraints.FirstNameMaxLength);
 
             builder.Property(d => d.LastName)
                    .IsRequired()
-                   .HasMaxLength(100);
+                   .HasMaxLength(FieldConstraints.LastNameMaxLength);
 
             builder.Property(d => d.CareerYearStart)
                    .IsRequired();

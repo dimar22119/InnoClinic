@@ -1,4 +1,5 @@
-﻿using ProfilesService.Application.Common;
+﻿using Mapster;
+using ProfilesService.Application.Common;
 using ProfilesService.Application.Dtos.Patients;
 using ProfilesService.Application.Interfaces.Repositories;
 using ProfilesService.Application.Interfaces.Services;
@@ -13,20 +14,17 @@ namespace ProfilesService.Application.Services
             var patient = await patientRepository.GetByIdAsync(id);
             return patient is null
                 ? Result<PatientResponse>.Failure(new Error(ErrorCode.NotFound, "Patient not found"))
-                : Result<PatientResponse>.Success(MapToResponse(patient));
+                : Result<PatientResponse>.Success(patient.Adapt<PatientResponse>());
         }
 
         public async Task<Result<IEnumerable<PatientResponse>>> GetAllAsync()
         {
             var patients = await patientRepository.GetAllAsync();
-            return Result<IEnumerable<PatientResponse>>.Success(patients.Select(MapToResponse));
+            return Result<IEnumerable<PatientResponse>>.Success(patients.Adapt<IEnumerable<PatientResponse>>());
         }
 
         public async Task<Result<PatientResponse>> CreateAsync(CreatePatientRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.FirstName))
-                return Result<PatientResponse>.Failure(new Error(ErrorCode.ValidationFailed, "First name is required"));
-
             var patient = new Patient(
                 request.AccountId,
                 request.FirstName,
@@ -34,8 +32,15 @@ namespace ProfilesService.Application.Services
                 request.BirthDate
             );
 
+            var existingPatient = await patientRepository.GetByNameAsync(request.FirstName, request.LastName);
+
+            if(existingPatient != null)
+            {
+                return Result<PatientResponse>.Failure(new Error(ErrorCode.Conflict, "Patient with the same name already exists"));
+            }
+
             await patientRepository.AddAsync(patient);
-            return Result<PatientResponse>.Success(MapToResponse(patient));
+            return Result<PatientResponse>.Success(patient.Adapt<PatientResponse>());
         }
 
         public async Task<Result<PatientResponse>> UpdateAsync(UpdatePatientRequest request)
@@ -51,7 +56,7 @@ namespace ProfilesService.Application.Services
             );
 
             await patientRepository.UpdateAsync(patient);
-            return Result<PatientResponse>.Success(MapToResponse(patient));
+            return Result<PatientResponse>.Success(patient.Adapt<PatientResponse>());
         }
 
         public async Task<Result> DeleteAsync(Guid id)
@@ -67,16 +72,7 @@ namespace ProfilesService.Application.Services
         public async Task<Result<IEnumerable<PatientResponse>>> GetByNameAsync(string firstName, string lastName)
         {
             var patients = await patientRepository.GetByNameAsync(firstName, lastName);
-            return Result<IEnumerable<PatientResponse>>.Success(patients.Select(MapToResponse));
+            return Result<IEnumerable<PatientResponse>>.Success(patients.Adapt<IEnumerable<PatientResponse>>());
         }
-
-        private static PatientResponse MapToResponse(Patient patient) =>
-            new PatientResponse(
-                patient.Id,
-                patient.AccountId,
-                patient.FirstName,
-                patient.LastName,
-                patient.BirthDate
-            );
     }
 }

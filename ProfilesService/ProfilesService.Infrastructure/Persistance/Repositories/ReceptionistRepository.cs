@@ -33,5 +33,14 @@ namespace ProfilesService.Infrastructure.Persistance.Repositories
                 await context.SaveChangesAsync();
             }
         }
+
+        public async Task<IEnumerable<Receptionist>> GetByNameAsync(string firstName, string lastName)
+        {
+            return await context.Receptionists
+                .Where(d =>
+                    EF.Functions.Like(d.FirstName, $"%{firstName}%") &&
+                    EF.Functions.Like(d.LastName, $"%{lastName}%"))
+                .ToListAsync();
+        }
     }
 }

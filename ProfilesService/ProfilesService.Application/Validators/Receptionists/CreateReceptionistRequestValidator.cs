@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using ProfilesService.Application.Dtos.Receptionist;
+using ProfilesService.Domain.Common;
 
 namespace ProfilesService.Application.Validators.Receptionists
 {
@@ -11,11 +12,11 @@ namespace ProfilesService.Application.Validators.Receptionists
 
             RuleFor(x => x.FirstName)
                 .NotEmpty().WithMessage("First name is required.")
-                .MaximumLength(50);
+                .MaximumLength(FieldConstraints.FirstNameMaxLength);
 
             RuleFor(x => x.LastName)
                 .NotEmpty().WithMessage("Last name is required.")
-                .MaximumLength(50);
+                .MaximumLength(FieldConstraints.LastNameMaxLength);
         }
     }
 }

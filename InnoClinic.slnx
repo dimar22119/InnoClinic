@@ -5,4 +5,10 @@
     <Project Path="AuthService/Auth.Domain/Auth.Domain.csproj" Id="28844c56-76b4-45e5-be54-f77635214162" />
     <Project Path="AuthService/Auth.Infrastructure/Auth.Infrastructure.csproj" Id="137eba45-0dff-44be-aca9-1ba59b1fac5a" />
   </Folder>
+  <Folder Name="/ProfilesService/">
+    <Project Path="ProfilesService/ProfilesService.Api/ProfilesService.Api.csproj" Id="04128951-cfdb-4cfe-a85a-642784607440" />
+    <Project Path="ProfilesService/ProfilesService.Application/ProfilesService.Application.csproj" Id="d2377860-a128-4be5-81fe-4f246c92ca8a" />
+    <Project Path="ProfilesService/ProfilesService.Domain/ProfilesService.Domain.csproj" Id="d7e6b115-5f39-49c5-a0cd-bd6c3f762b7e" />
+    <Project Path="ProfilesService/ProfilesService.Infrastructure/ProfilesService.Infrastructure.csproj" Id="2b16ab17-7d03-436c-a875-933d5609af78" />
+  </Folder>
 </Solution>

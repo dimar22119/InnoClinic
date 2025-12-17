@@ -1,0 +1,31 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using ProfilesService.Domain.Common;
+using ProfilesService.Domain.Entities;
+
+namespace ProfilesService.Infrastructure.Persistance.Configurations
+{
+    public class PatientConfiguration : IEntityTypeConfiguration<Patient>
+    {
+        public void Configure(EntityTypeBuilder<Patient> builder)
+        {
+            builder.ToTable("Patients");
+
+            builder.HasKey(p => p.Id);
+
+            builder.Property(p => p.AccountId)
+                   .IsRequired();
+
+            builder.Property(p => p.FirstName)
+                   .IsRequired()
+                   .HasMaxLength(FieldConstraints.FirstNameMaxLength);
+
+            builder.Property(p => p.LastName)
+                   .IsRequired()
+                   .HasMaxLength(FieldConstraints.LastNameMaxLength);
+
+            builder.Property(p => p.BirthDate)
+                   .IsRequired();
+        }
+    }
+}

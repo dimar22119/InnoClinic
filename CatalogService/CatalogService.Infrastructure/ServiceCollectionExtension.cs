@@ -6,6 +6,9 @@ using CatalogService.Infrastructure.Persistance.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using CatalogService.Application.Validators;
 
 namespace CatalogService.Infrastructure
 {
@@ -24,6 +27,16 @@ namespace CatalogService.Infrastructure
             services.AddScoped<ISpecializationManager, SpecializationManager>();
             services.AddScoped<IServiceManager, ServiceManager>();
 
+            return services;
+        }
+
+        public static IServiceCollection AddValidation(this IServiceCollection services)
+        {
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<CreateServiceDtoValidator>();
+            services.AddValidatorsFromAssemblyContaining<UpdateServiceDtoValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateSpecializationDtoValidator>();
+            services.AddValidatorsFromAssemblyContaining<UpdateServiceDtoValidator>();
             return services;
         }
     }

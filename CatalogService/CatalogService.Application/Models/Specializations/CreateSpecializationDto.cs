@@ -1,4 +1,4 @@
-﻿namespace CatalogService.Application.Dtos.Specializations
+﻿namespace CatalogService.Application.Models.Specializations
 {
     public record CreateSpecializationDto(string Name, bool IsActive);
 }

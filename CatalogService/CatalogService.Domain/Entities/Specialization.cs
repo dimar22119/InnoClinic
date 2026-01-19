@@ -2,15 +2,8 @@
 {
     public class Specialization
     {
-        public Guid Id { get; private set; }
-        public string Name { get; private set; }
-        public bool IsActive { get; private set; }
-
-        public Specialization(string name, bool isActive)
-        {
-            Id = Guid.NewGuid();
-            Name = name;
-            IsActive = isActive;
-        }
+        public Guid Id { get; init; }
+        public required string Name { get; init; }
+        public bool IsActive { get; init; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using CatalogService.Application.Exceptions;
+using FluentValidation;
 
 namespace CatalogService.Api.Middleware
 {
@@ -9,6 +10,16 @@ namespace CatalogService.Api.Middleware
             try
             {
                 await next(context);
+            }
+            catch (NotFoundException ex)
+            {
+                context.Response.StatusCode = StatusCodes.Status404NotFound;
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    title = "Not Found",
+                    status = 404,
+                    detail = ex.Message
+                });
             }
             catch (ValidationException ex)
             {

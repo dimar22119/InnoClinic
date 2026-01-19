@@ -2,15 +2,15 @@
 using CatalogService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace CatalogService.Infrastructure.Persistance.Repositories
+namespace CatalogService.Infrastructure.Persistence.Repositories
 {
     public class ServiceRepository(CatalogDbContext db) : IServiceRepository
     {
         public async Task<Service?> GetByIdAsync(Guid id)
             => await db.Services.FindAsync(id);
 
-        public async Task<IEnumerable<Service>> GetAllAsync()
-            => await db.Services.ToListAsync();
+        public async Task<IReadOnlyList<Service>> GetAllAsync()
+            => await db.Services.AsNoTracking().ToListAsync();
 
         public async Task AddAsync(Service service)
         {
@@ -24,14 +24,10 @@ namespace CatalogService.Infrastructure.Persistance.Repositories
             await db.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Service service)
         {
-            var entity = await db.Services.FindAsync(id);
-            if (entity != null)
-            {
-                db.Services.Remove(entity);
-                await db.SaveChangesAsync();
-            }
+            db.Services.Remove(service);
+            await db.SaveChangesAsync();
         }
     }
 

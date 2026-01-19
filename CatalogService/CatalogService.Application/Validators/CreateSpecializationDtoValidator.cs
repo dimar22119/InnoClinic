@@ -1,4 +1,4 @@
-﻿using CatalogService.Application.Dtos.Specializations;
+﻿using CatalogService.Application.Models.Specializations;
 using CatalogService.Domain.Common;
 using FluentValidation;
 

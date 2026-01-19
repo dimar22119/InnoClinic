@@ -1,6 +1,5 @@
-﻿using CatalogService.Application.Dtos.Services;
-using CatalogService.Application.Interfaces.Services;
-using Mapster;
+﻿using CatalogService.Application.Interfaces.Services;
+using CatalogService.Application.Models.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatalogService.Api.Controllers
@@ -10,37 +9,29 @@ namespace CatalogService.Api.Controllers
     public class ServicesController(IServiceManager manager) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var items = await manager.GetAllAsync();
-            return Ok(items.Adapt<IEnumerable<ServiceResponseDto>>());
-        }
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+            => Ok(await manager.GetAllAsync());
 
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetById(Guid id)
-        {
-            var item = await manager.GetByIdAsync(id);
-            if (item is null) return NotFound();
-
-            return Ok(item.Adapt<ServiceResponseDto>());
-        }
+        public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+            => Ok(await manager.GetByIdAsync(id));
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateServiceDto dto)
+        public async Task<IActionResult> Create(CreateServiceDto dto, CancellationToken cancellationToken)
         {
             var result = await manager.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result.Adapt<ServiceResponseDto>());
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, UpdateServiceDto dto)
+        public async Task<IActionResult> Update(Guid id, UpdateServiceDto dto, CancellationToken cancellationToken)
         {
             await manager.UpdateAsync(id, dto);
             return NoContent();
         }
 
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
             await manager.DeleteAsync(id);
             return NoContent();

@@ -1,44 +1,62 @@
-﻿using CatalogService.Application.Dtos.Specializations;
+﻿using CatalogService.Application.Dtos.Services;
+using CatalogService.Application.Exceptions;
 using CatalogService.Application.Interfaces.Repository;
 using CatalogService.Application.Interfaces.Services;
+using CatalogService.Application.Models.Specializations;
 using CatalogService.Domain.Entities;
+using Mapster;
 
 namespace CatalogService.Application.Services
 {
     public class SpecializationManager(ISpecializationRepository repo) : ISpecializationManager
     {
-        public Task<Specialization?> GetByIdAsync(Guid id)
-            => repo.GetByIdAsync(id);
-
-        public Task<IEnumerable<Specialization>> GetAllAsync()
-            => repo.GetAllAsync();
-
-        public async Task<Specialization> CreateAsync(CreateSpecializationDto dto)
+        public async Task<SpecializationResponseDto> GetByIdAsync(Guid id)
         {
-            var specialization = new Specialization(
-                dto.Name,
-                dto.IsActive
-            );
+            var item = await repo.GetByIdAsync(id)
+                   ?? throw new NotFoundException($"Specialization with ID {id} was not found.");
+
+            return item.Adapt<SpecializationResponseDto>();
+        }
+
+        public async Task<IReadOnlyList<SpecializationResponseDto>> GetAllAsync()
+        {
+            var items = await repo.GetAllAsync();
+            return items.Adapt<IReadOnlyList<SpecializationResponseDto>>();
+        }
+
+        public async Task<SpecializationResponseDto> CreateAsync(CreateSpecializationDto dto)
+        {
+            var specialization = new Specialization
+            {
+                Name = dto.Name,
+                IsActive = dto.IsActive
+            };
 
             await repo.AddAsync(specialization);
-            return specialization;
+            return specialization.Adapt<SpecializationResponseDto>();
         }
 
         public async Task UpdateAsync(Guid id, UpdateSpecializationDto dto)
         {
             var specialization = await repo.GetByIdAsync(id)
-                ?? throw new Exception("Specialization not found");
+                ?? throw new NotFoundException($"Specialization with ID {id} was not found.");
 
-            var updated = new Specialization(
-                dto.Name,
-                dto.IsActive
-            );
+            var updated = new Specialization
+            {
+                Name = dto.Name,
+                IsActive = dto.IsActive
+            };
 
             await repo.UpdateAsync(updated);
         }
 
-        public Task DeleteAsync(Guid id)
-            => repo.DeleteAsync(id);
+        public async Task DeleteAsync(Guid id)
+        {
+            var specialization = await repo.GetByIdAsync(id)
+                ?? throw new NotFoundException($"Specialization with ID {id} was not found.");
+
+            await repo.DeleteAsync(specialization);
+        }
     }
 
 }

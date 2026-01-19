@@ -5,15 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CatalogService.Infrastructure.Persistance.Repositories
+namespace CatalogService.Infrastructure.Persistence.Repositories
 {
     public class SpecializationRepository(CatalogDbContext db) : ISpecializationRepository
     {
         public async Task<Specialization?> GetByIdAsync(Guid id)
             => await db.Specializations.FindAsync(id);
 
-        public async Task<IEnumerable<Specialization>> GetAllAsync()
-            => await db.Specializations.ToListAsync();
+        public async Task<IReadOnlyList<Specialization>> GetAllAsync()
+            => await db.Specializations.AsNoTracking().ToListAsync();
 
         public async Task AddAsync(Specialization specialization)
         {
@@ -27,14 +27,10 @@ namespace CatalogService.Infrastructure.Persistance.Repositories
             await db.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Specialization specialization)
         {
-            var entity = await db.Specializations.FindAsync(id);
-            if (entity != null)
-            {
-                db.Specializations.Remove(entity);
-                await db.SaveChangesAsync();
-            }
+            db.Specializations.Remove(specialization);
+            await db.SaveChangesAsync();
         }
     }
 

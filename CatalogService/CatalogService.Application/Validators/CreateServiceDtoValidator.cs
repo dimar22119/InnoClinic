@@ -1,4 +1,4 @@
-﻿using CatalogService.Application.Dtos.Services;
+﻿using CatalogService.Application.Models.Services;
 using CatalogService.Domain.Common;
 using FluentValidation;
 

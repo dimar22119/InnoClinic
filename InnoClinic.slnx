@@ -5,6 +5,12 @@
     <Project Path="AuthService/Auth.Domain/Auth.Domain.csproj" Id="28844c56-76b4-45e5-be54-f77635214162" />
     <Project Path="AuthService/Auth.Infrastructure/Auth.Infrastructure.csproj" Id="137eba45-0dff-44be-aca9-1ba59b1fac5a" />
   </Folder>
+  <Folder Name="/CatalogService/">
+    <Project Path="CatalogService/CatalogService.Api/CatalogService.Api.csproj" Id="6a0a1311-4c6b-4b5e-91c8-c3bddde4a741" />
+    <Project Path="CatalogService/CatalogService.Application/CatalogService.Application.csproj" Id="ae16be20-7f05-4abb-80af-ab7fa6ceb3ec" />
+    <Project Path="CatalogService/CatalogService.Domain/CatalogService.Domain.csproj" Id="8708eb05-2ef2-4404-877f-b8195ec51e13" />
+    <Project Path="CatalogService/CatalogService.Infrastructure/CatalogService.Infrastructure.csproj" Id="e940c068-5939-4cd7-a3bd-03414f8c936e" />
+  </Folder>
   <Folder Name="/ProfilesService/">
     <Project Path="ProfilesService/ProfilesService.Api/ProfilesService.Api.csproj" Id="04128951-cfdb-4cfe-a85a-642784607440" />
     <Project Path="ProfilesService/ProfilesService.Application/ProfilesService.Application.csproj" Id="d2377860-a128-4be5-81fe-4f246c92ca8a" />

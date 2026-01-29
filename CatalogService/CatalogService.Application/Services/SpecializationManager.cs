@@ -1,4 +1,4 @@
-﻿using CatalogService.Application.Dtos.Services;
+﻿using CatalogService.Application.Models;
 using CatalogService.Application.Exceptions;
 using CatalogService.Application.Interfaces.Repository;
 using CatalogService.Application.Interfaces.Services;
@@ -18,10 +18,17 @@ namespace CatalogService.Application.Services
             return item.Adapt<SpecializationResponseDto>();
         }
 
-        public async Task<IReadOnlyList<SpecializationResponseDto>> GetAllAsync()
+        public async Task<PagedResponse<SpecializationResponseDto>> GetPagedAsync(PaginationParams paginationParams)
         {
-            var items = await repo.GetAllAsync();
-            return items.Adapt<IReadOnlyList<SpecializationResponseDto>>();
+            var pagedList = await repo.GetPagedAsync(paginationParams);
+
+            var dtos = pagedList.Items.Adapt<IReadOnlyList<SpecializationResponseDto>>();
+
+            return new PagedResponse<SpecializationResponseDto>(
+                dtos,
+                paginationParams.PageNumber,
+                paginationParams.PageSize,
+                pagedList.TotalCount);
         }
 
         public async Task<SpecializationResponseDto> CreateAsync(CreateSpecializationDto dto)

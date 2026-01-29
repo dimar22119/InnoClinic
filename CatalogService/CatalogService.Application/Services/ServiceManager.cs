@@ -1,6 +1,7 @@
 ﻿using CatalogService.Application.Exceptions;
 using CatalogService.Application.Interfaces.Repository;
 using CatalogService.Application.Interfaces.Services;
+using CatalogService.Application.Models;
 using CatalogService.Application.Models.Services;
 using CatalogService.Domain.Entities;
 using Mapster;
@@ -17,10 +18,17 @@ namespace CatalogService.Application.Services
             return item.Adapt<ServiceResponseDto>();
         }
 
-        public async Task<IReadOnlyList<ServiceResponseDto>> GetAllAsync()
+        public async Task<PagedResponse<ServiceResponseDto>> GetPagedAsync(PaginationParams paginationParams)
         {
-            var items = await repo.GetAllAsync();
-            return items.Adapt<IReadOnlyList<ServiceResponseDto>>();
+            var pagedList = await repo.GetPagedAsync(paginationParams);
+
+            var dtos = pagedList.Items.Adapt<IReadOnlyList<ServiceResponseDto>>();
+
+            return new PagedResponse<ServiceResponseDto>(
+                dtos,
+                paginationParams.PageNumber,
+                paginationParams.PageSize,
+                pagedList.TotalCount);
         }
 
         public async Task<ServiceResponseDto> CreateAsync(CreateServiceDto dto)

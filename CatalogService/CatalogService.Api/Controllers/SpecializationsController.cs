@@ -1,4 +1,5 @@
 ﻿using CatalogService.Application.Interfaces.Services;
+using CatalogService.Application.Models;
 using CatalogService.Application.Models.Specializations;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,8 +10,13 @@ namespace CatalogService.Api.Controllers
     public class SpecializationsController(ISpecializationManager manager) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
-            => Ok(await manager.GetAllAsync());
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var paginationParams = new PaginationParams(pageNumber, pageSize);
+
+            var result = await manager.GetPagedAsync(paginationParams);
+            return Ok(result);
+        }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)

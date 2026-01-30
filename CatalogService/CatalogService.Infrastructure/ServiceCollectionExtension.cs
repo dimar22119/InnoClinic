@@ -1,8 +1,8 @@
 ﻿using CatalogService.Application.Interfaces.Repository;
 using CatalogService.Application.Interfaces.Services;
 using CatalogService.Application.Services;
-using CatalogService.Infrastructure.Persistance;
-using CatalogService.Infrastructure.Persistance.Repositories;
+using CatalogService.Infrastructure.Persistence;
+using CatalogService.Infrastructure.Persistence.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;

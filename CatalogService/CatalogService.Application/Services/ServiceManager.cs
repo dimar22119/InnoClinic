@@ -20,9 +20,9 @@ namespace CatalogService.Application.Services
 
         public async Task<PagedResponse<ServiceResponseDto>> GetPagedAsync(PaginationParams paginationParams)
         {
-            var pagedList = await repo.GetPagedAsync(paginationParams);
+            var pagedList = await repo.GetPagedAsync(paginationParams.Skip, paginationParams.Take);
 
-            var dtos = pagedList.Items.Adapt<IReadOnlyList<ServiceResponseDto>>();
+            var dtos = pagedList.Adapt<IReadOnlyList<ServiceResponseDto>>();
 
             return new PagedResponse<ServiceResponseDto>(
                 dtos,
@@ -45,7 +45,8 @@ namespace CatalogService.Application.Services
                 Category = dto.Category
             };
 
-            await repo.AddAsync(service);
+            repo.Add(service);
+            await repo.SaveChangesAsync();
             return service.Adapt<ServiceResponseDto>();
         }
 
@@ -64,7 +65,8 @@ namespace CatalogService.Application.Services
                 Category = dto.Category
             };
 
-            await repo.UpdateAsync(updated);
+            repo.Update(updated);
+            await repo.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid id)
@@ -72,7 +74,8 @@ namespace CatalogService.Application.Services
             var service = await repo.GetByIdAsync(id)
                   ?? throw new NotFoundException($"Service with ID {id} was not found.");
 
-            await repo.DeleteAsync(service);
+            repo.Delete(service);
+            await repo.SaveChangesAsync();
         }
     }
 

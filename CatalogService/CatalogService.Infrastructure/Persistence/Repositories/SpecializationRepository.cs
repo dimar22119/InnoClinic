@@ -11,38 +11,27 @@ namespace CatalogService.Infrastructure.Persistence.Repositories
         public async Task<Specialization?> GetByIdAsync(Guid id)
             => await db.Specializations.FindAsync(id);
 
-        public async Task AddAsync(Specialization specialization)
-        {
-            db.Specializations.Add(specialization);
-            await db.SaveChangesAsync();
-        }
+        public async void Add(Specialization specialization) => db.Specializations.Add(specialization);
+        public async void Update(Specialization specialization) => db.Specializations.Update(specialization);
+        public async void Delete(Specialization specialization) => db.Specializations.Remove(specialization);
 
-        public async Task UpdateAsync(Specialization specialization)
-        {
-            db.Specializations.Update(specialization);
-            await db.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(Specialization specialization)
-        {
-            db.Specializations.Remove(specialization);
-            await db.SaveChangesAsync();
-        }
-
-        public async Task<PagedList<Specialization>> GetPagedAsync(PaginationParams paginationParams)
+        public async Task<PagedList<Specialization>> GetPagedAsync(int skip, int take)
         {
             var query = db.Specializations.AsNoTracking();
 
             var totalCount = await query.CountAsync();
             var items = await query
                 .OrderBy(s => s.Id)
-                .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
-                .Take(paginationParams.PageSize)
+                .Skip(skip)
+                .Take(take)
                 .ToListAsync();
 
             return new PagedList<Specialization>(items, totalCount);
 
         }
+
+        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+            => await db.SaveChangesAsync(cancellationToken);
     }
 
 }

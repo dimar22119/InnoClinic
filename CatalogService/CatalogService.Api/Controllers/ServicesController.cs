@@ -10,10 +10,8 @@ namespace CatalogService.Api.Controllers
     public class ServicesController(IServiceManager manager) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAll(CancellationToken cancellationToken, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken, [FromQuery] PaginationParams paginationParams)
         {
-            var paginationParams = new PaginationParams(pageNumber, pageSize);
-
             var result = await manager.GetPagedAsync(paginationParams);
             return Ok(result);
         }

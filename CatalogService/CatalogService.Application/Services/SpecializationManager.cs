@@ -20,9 +20,9 @@ namespace CatalogService.Application.Services
 
         public async Task<PagedResponse<SpecializationResponseDto>> GetPagedAsync(PaginationParams paginationParams)
         {
-            var pagedList = await repo.GetPagedAsync(paginationParams);
+            var pagedList = await repo.GetPagedAsync(paginationParams.Skip, paginationParams.Take);
 
-            var dtos = pagedList.Items.Adapt<IReadOnlyList<SpecializationResponseDto>>();
+            var dtos = pagedList.Adapt<IReadOnlyList<SpecializationResponseDto>>();
 
             return new PagedResponse<SpecializationResponseDto>(
                 dtos,
@@ -39,7 +39,8 @@ namespace CatalogService.Application.Services
                 IsActive = dto.IsActive
             };
 
-            await repo.AddAsync(specialization);
+            repo.Add(specialization);
+            await repo.SaveChangesAsync();
             return specialization.Adapt<SpecializationResponseDto>();
         }
 
@@ -54,7 +55,8 @@ namespace CatalogService.Application.Services
                 IsActive = dto.IsActive
             };
 
-            await repo.UpdateAsync(updated);
+            repo.Update(updated);
+            await repo.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid id)
@@ -62,7 +64,8 @@ namespace CatalogService.Application.Services
             var specialization = await repo.GetByIdAsync(id)
                 ?? throw new NotFoundException($"Specialization with ID {id} was not found.");
 
-            await repo.DeleteAsync(specialization);
+            repo.Delete(specialization);
+            await repo.SaveChangesAsync();
         }
     }
 

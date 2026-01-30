@@ -1,14 +1,9 @@
-﻿namespace CatalogService.Domain.Common
-{
-    public class PagedList<T>
-    {
-        public IReadOnlyList<T> Items { get; }
-        public int TotalCount { get; }
+﻿using System.Collections.ObjectModel;
 
-        public PagedList(IReadOnlyList<T> items, int totalCount)
-        {
-            Items = items;
-            TotalCount = totalCount;
-        }
+namespace CatalogService.Domain.Common
+{
+    public class PagedList<T>(IList<T> items, int totalCount) : ReadOnlyCollection<T>(items)
+    {
+        public int TotalCount { get; } = totalCount;
     }
 }

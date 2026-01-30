@@ -7,9 +7,10 @@ namespace CatalogService.Application.Interfaces.Repository
     public interface IServiceRepository
     {
         Task<Service?> GetByIdAsync(Guid id);
-        Task<PagedList<Service>> GetPagedAsync(PaginationParams paginationParams);
-        Task AddAsync(Service service);
-        Task UpdateAsync(Service service);
-        Task DeleteAsync(Service service);
+        Task<PagedList<Service>> GetPagedAsync(int skip, int take);
+        void Add(Service service);
+        void Update(Service service);
+        void Delete(Service service);
+        Task SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

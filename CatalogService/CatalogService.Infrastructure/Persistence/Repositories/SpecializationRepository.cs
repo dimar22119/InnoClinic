@@ -1,9 +1,8 @@
 ﻿using CatalogService.Application.Interfaces.Repository;
+using CatalogService.Application.Models;
+using CatalogService.Domain.Common;
 using CatalogService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CatalogService.Infrastructure.Persistence.Repositories
 {
@@ -12,26 +11,27 @@ namespace CatalogService.Infrastructure.Persistence.Repositories
         public async Task<Specialization?> GetByIdAsync(Guid id)
             => await db.Specializations.FindAsync(id);
 
-        public async Task<IReadOnlyList<Specialization>> GetAllAsync()
-            => await db.Specializations.AsNoTracking().ToListAsync();
+        public async void Add(Specialization specialization) => db.Specializations.Add(specialization);
+        public async void Update(Specialization specialization) => db.Specializations.Update(specialization);
+        public async void Delete(Specialization specialization) => db.Specializations.Remove(specialization);
 
-        public async Task AddAsync(Specialization specialization)
+        public async Task<PagedList<Specialization>> GetPagedAsync(int skip, int take)
         {
-            db.Specializations.Add(specialization);
-            await db.SaveChangesAsync();
+            var query = db.Specializations.AsNoTracking();
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .OrderBy(s => s.Id)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            return new PagedList<Specialization>(items, totalCount);
+
         }
 
-        public async Task UpdateAsync(Specialization specialization)
-        {
-            db.Specializations.Update(specialization);
-            await db.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(Specialization specialization)
-        {
-            db.Specializations.Remove(specialization);
-            await db.SaveChangesAsync();
-        }
+        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+            => await db.SaveChangesAsync(cancellationToken);
     }
 
 }

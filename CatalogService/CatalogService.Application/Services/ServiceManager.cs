@@ -1,6 +1,7 @@
 ﻿using CatalogService.Application.Exceptions;
 using CatalogService.Application.Interfaces.Repository;
 using CatalogService.Application.Interfaces.Services;
+using CatalogService.Application.Models;
 using CatalogService.Application.Models.Services;
 using CatalogService.Domain.Entities;
 using Mapster;
@@ -17,10 +18,17 @@ namespace CatalogService.Application.Services
             return item.Adapt<ServiceResponseDto>();
         }
 
-        public async Task<IReadOnlyList<ServiceResponseDto>> GetAllAsync()
+        public async Task<PagedResponse<ServiceResponseDto>> GetPagedAsync(PaginationParams paginationParams)
         {
-            var items = await repo.GetAllAsync();
-            return items.Adapt<IReadOnlyList<ServiceResponseDto>>();
+            var pagedList = await repo.GetPagedAsync(paginationParams.Skip, paginationParams.Take);
+
+            var dtos = pagedList.Adapt<IReadOnlyList<ServiceResponseDto>>();
+
+            return new PagedResponse<ServiceResponseDto>(
+                dtos,
+                paginationParams.PageNumber,
+                paginationParams.PageSize,
+                pagedList.TotalCount);
         }
 
         public async Task<ServiceResponseDto> CreateAsync(CreateServiceDto dto)
@@ -37,7 +45,8 @@ namespace CatalogService.Application.Services
                 Category = dto.Category
             };
 
-            await repo.AddAsync(service);
+            repo.Add(service);
+            await repo.SaveChangesAsync();
             return service.Adapt<ServiceResponseDto>();
         }
 
@@ -56,7 +65,8 @@ namespace CatalogService.Application.Services
                 Category = dto.Category
             };
 
-            await repo.UpdateAsync(updated);
+            repo.Update(updated);
+            await repo.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid id)
@@ -64,7 +74,8 @@ namespace CatalogService.Application.Services
             var service = await repo.GetByIdAsync(id)
                   ?? throw new NotFoundException($"Service with ID {id} was not found.");
 
-            await repo.DeleteAsync(service);
+            repo.Delete(service);
+            await repo.SaveChangesAsync();
         }
     }
 

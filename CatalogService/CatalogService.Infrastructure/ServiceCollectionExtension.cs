@@ -19,7 +19,7 @@ namespace CatalogService.Infrastructure
             IConfiguration configuration)
         {
             services.AddDbContext<CatalogDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("CatalogDb")));
+                options.UseSqlServer(configuration.GetConnectionString("CatalogDatabase")));
 
             services.AddScoped<ISpecializationRepository, SpecializationRepository>();
             services.AddScoped<IServiceRepository, ServiceRepository>();

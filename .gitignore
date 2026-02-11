@@ -2,6 +2,7 @@
 .vs/
 bin/
 obj/
+*.tmp
 
 # User-specific files
 *.user
@@ -12,3 +13,15 @@ obj/
 # Build results
 [Bb]in/
 [Oo]bj/
+
+# SonarQube
+.sonarqube/
+
+# Unit Tests & Coverage
+TestResults/
+*.trx
+*.xml
+
+# IDE & OS
+.vscode/
+*.log

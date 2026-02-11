@@ -51,6 +51,7 @@ namespace CatalogService.Application.Services
 
             var updated = new Specialization
             {
+                Id = specialization.Id,
                 Name = dto.Name,
                 IsActive = dto.IsActive
             };

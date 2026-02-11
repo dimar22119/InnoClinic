@@ -1,5 +1,4 @@
 ﻿using CatalogService.Application.Interfaces.Repository;
-using CatalogService.Application.Models;
 using CatalogService.Domain.Common;
 using CatalogService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;

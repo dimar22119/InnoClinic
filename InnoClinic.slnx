@@ -11,6 +11,10 @@
     <Project Path="CatalogService/CatalogService.Domain/CatalogService.Domain.csproj" Id="8708eb05-2ef2-4404-877f-b8195ec51e13" />
     <Project Path="CatalogService/CatalogService.Infrastructure/CatalogService.Infrastructure.csproj" Id="e940c068-5939-4cd7-a3bd-03414f8c936e" />
   </Folder>
+  <Folder Name="/CatalogService/CatalogService.Tests/">
+    <Project Path="CatalogService/CatalogService.Tests/CatalogService.Api.UnitTests/CatalogService.Api.UnitTests.csproj" Id="a021fc5f-3998-4631-a612-e3b391186490" />
+    <Project Path="CatalogService/CatalogService.Tests/CatalogService.Application.UnitTests/CatalogService.Application.UnitTests.csproj" Id="30eba3ac-a899-4715-8296-06df7694f586" />
+  </Folder>
   <Folder Name="/ProfilesService/">
     <Project Path="ProfilesService/ProfilesService.Api/ProfilesService.Api.csproj" Id="04128951-cfdb-4cfe-a85a-642784607440" />
     <Project Path="ProfilesService/ProfilesService.Application/ProfilesService.Application.csproj" Id="d2377860-a128-4be5-81fe-4f246c92ca8a" />
